@@ -1,0 +1,23 @@
+:root {
+  --theme-primary: #F49FBC;
+  --theme-secondary: #556B2F;
+  --light-primary: #f7b8cc;
+  --lighter-primary: #fad1dd;
+  --dark-primary: #e886a8;
+  --darker-primary: #dc6d94;
+  --light-secondary: #7a8a4a;
+  --lighter-secondary: #9ea96b;
+  --dark-secondary: #3d4a21;
+  --darker-secondary: #2a3317;
+  --neutral-dark: #201f1e;
+  --white: #FCFFFC;
+  --neutral-light: #edebe9;
+  --neutral-lighter: #f3f2f1;
+  --neutral-lighter-alt: #faf9f8;
+  --neutral-tertiary-alt: #a19f9d;
+  --neutral-quaternary-alt: #e1dfdd;
+  --correct: #6ab792;
+  --delete: #e69191;
+}
+
+/* #F374AE */
