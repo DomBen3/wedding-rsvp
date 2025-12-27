@@ -2,12 +2,16 @@ import React, { useEffect, useRef, useState } from "react";
 import usPhoto from "../../images/us.jpg";
 import "./Home.css";
 
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/mnjqjawj";
+
 export default function Home() {
   const [rsvpOpen, setRsvpOpen] = useState(false);
   const [attendingAnswer, setAttendingAnswer] = useState(null); // "yes" | "no" | null
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [isFading, setIsFading] = useState(false);
   const fadeTimerRef = useRef(null);
 
@@ -16,6 +20,34 @@ export default function Home() {
       if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
     };
   }, []);
+
+  async function submitToFormspree(payload) {
+    setIsSubmitting(true);
+    setSubmitError("");
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        let detail = "";
+        try {
+          const data = await res.json();
+          detail = data?.error || data?.message || "";
+        } catch {
+          // ignore json parse errors
+        }
+        throw new Error(detail || `Form submit failed (${res.status})`);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   function transitionTo(nextStateFn, ms = 180) {
     setIsFading(true);
@@ -33,17 +65,28 @@ export default function Home() {
       setAttendingAnswer(null);
       setName("");
       setAddress("");
+      setSubmitError("");
     });
   }
 
-  function handlePickAttending(answer) {
+  async function handlePickAttending(answer) {
     if (!name.trim()) return;
 
     if (answer === "no") {
-      transitionTo(() => {
-        setAttendingAnswer("no");
-        setSubmitted(true);
-      });
+      try {
+        await submitToFormspree({
+          name: name.trim(),
+          answers: name.trim(),
+          answer: "no",
+          address: "",
+        });
+        transitionTo(() => {
+          setAttendingAnswer("no");
+          setSubmitted(true);
+        });
+      } catch (err) {
+        setSubmitError(err?.message || "Something went wrong sending your RSVP.");
+      }
       return;
     }
 
@@ -52,11 +95,29 @@ export default function Home() {
     });
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    transitionTo(() => {
-      setSubmitted(true);
-    });
+
+    if (!name.trim()) {
+      setSubmitError("Please enter your name first.");
+      return;
+    }
+    if (attendingAnswer !== "yes") return;
+    if (!address.trim()) return;
+
+    try {
+      await submitToFormspree({
+        name: name.trim(),
+        answers: name.trim(),
+        answer: "yes",
+        address: address.trim(),
+      });
+      transitionTo(() => {
+        setSubmitted(true);
+      });
+    } catch (err) {
+      setSubmitError(err?.message || "Something went wrong sending your address.");
+    }
   }
 
   return (
@@ -84,6 +145,11 @@ export default function Home() {
                 </>
               ) : (
                 <form className="home-form" onSubmit={handleSubmit}>
+                  {!!submitError && !submitted && (
+                    <p className="home-formError" role="alert">
+                      {submitError}
+                    </p>
+                  )}
                   {submitted ? (
                     <>
                       <h2 className="home-formTitle">Thank you!</h2>
@@ -109,7 +175,7 @@ export default function Home() {
                         <button
                           className="home-cta home-choiceBtn"
                           type="button"
-                        disabled={!name.trim()}
+                        disabled={!name.trim() || isSubmitting}
                           onClick={() => handlePickAttending("yes")}
                         >
                           Yes
@@ -117,12 +183,15 @@ export default function Home() {
                         <button
                           className="home-cta home-choiceBtn"
                           type="button"
-                        disabled={!name.trim()}
+                        disabled={!name.trim() || isSubmitting}
                           onClick={() => handlePickAttending("no")}
                         >
                           No
                         </button>
                       </div>
+                      {isSubmitting && (
+                        <p className="home-rsvpNote">Sending...</p>
+                      )}
                       <p className="home-rsvpNote">
                         This is an informal RSVP, we will send an official invitation at a later date.
                       </p>
@@ -145,9 +214,9 @@ export default function Home() {
                       <button
                         className="home-cta home-submit"
                         type="submit"
-                        disabled={!address.trim()}
+                        disabled={!address.trim() || isSubmitting}
                       >
-                        Submit
+                        {isSubmitting ? "Sending..." : "Submit"}
                       </button>
                     </>
                   ) : (
