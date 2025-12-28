@@ -468,6 +468,9 @@ export default function Home() {
                         autoComplete="street-address"
                         required
                       />
+                      <p className="home-fieldHint" aria-hidden="true">
+                        {t.form.addressPlaceholder}
+                      </p>
                       <button
                         className="home-cta home-submit"
                         type="submit"
