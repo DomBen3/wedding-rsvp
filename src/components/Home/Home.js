@@ -35,7 +35,7 @@ export default function Home() {
 
         rsvpTitle: "RSVP",
         partyNames:
-          "Please put the names of everyone in your family/party who will be attending below.",
+          "Please list the names of everyone in your family or party who was invited and is able to attend.",
         fullNamePlaceholder: "Full Name",
         attendingQuestion:
           'Do you think you will be attending (If you are not yet sure, please RSVP "Yes" for now)?',
@@ -78,7 +78,8 @@ export default function Home() {
         received: "응답이 접수되었습니다.",
 
         rsvpTitle: "RSVP",
-        partyNames: "참석하실 가족/일행의 모든 성함을 아래에 입력해 주세요.",
+        partyNames:
+          "초대받으신 가족 또는 일행 중 참석 가능한 모든 분의 성함을 입력해 주세요.",
         fullNamePlaceholder: "성함 (전체)",
         attendingQuestion:
           '참석하실 예정인가요? (아직 확실하지 않으시면 우선 "예"로 RSVP해 주세요.)',
