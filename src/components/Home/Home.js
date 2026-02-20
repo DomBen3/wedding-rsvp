@@ -16,7 +16,7 @@ export default function Home() {
       title: "Anna & Dominic",
       intro: {
         date: "Saturday, August 15th, 2026",
-        time: "5:00pm",
+        time: "4:00pm",
         venueName: "Baywood Clubhouse",
         venueCity: "Millsboro, Delaware",
         line: "at {{time}} at the {{venueLink}} in {{venueCity}}.",
@@ -60,7 +60,7 @@ export default function Home() {
       title: "Anna & Dominic",
       intro: {
         date: "2026년 8월 15일 (토)",
-        time: "오후 5:00",
+        time: "오후 4:00",
         venueName: "Baywood Clubhouse",
         venueCity: "델라웨어주 밀스보로",
         line: "{{date}} {{time}} · {{venueLink}} ({{venueCity}})",
